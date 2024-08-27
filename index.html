@@ -20,14 +20,18 @@
         }
         #soundBoard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
         }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
         button {
-            padding: 20px;
-            font-size: 18px;
+            padding: 15px;
+            font-size: 16px;
             cursor: pointer;
             background-color: #ffffff;
             color: #333;
@@ -35,12 +39,20 @@
             border-radius: 8px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
             transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            flex-grow: 1;
         }
         button:hover {
             box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
         }
         button:active {
             background-color: #e0e0e0;
+        }
+        .stop-button {
+            background-color: #ff4444;
+            color: white;
+            flex-grow: 0;
+            flex-shrink: 0;
+            width: 50px;
         }
     </style>
 </head>
@@ -51,6 +63,7 @@
     <script>
         const soundBoard = document.getElementById('soundBoard');
         const audioFiles = [
+            '街頭bgm.mp3', '講演bgm.mp3',  
             '0開演ブザー.mp3','1.mp3', '2.mp3', '3.mp3', '5.mp3', '5着信.mp3',
             '6.mp3', '6電話が切れる1.mp3', '7.mp3', '8.mp3',
             '9.mp3', '10.mp3', '11.mp3', '12.mp3',
@@ -60,21 +73,44 @@
             '25.mp3', '26.mp3', '27.mp3', '28.mp3',
             '29.mp3', '30.mp3', '31.mp3', '32.mp3',
             '33.mp3', '34.mp3', '35.mp3', '36.mp3',
-            '街頭bgm.mp3', '講演bgm.mp3',            
-            ];
+          
+        ];
+
+        let currentAudio = null;
 
         audioFiles.forEach(file => {
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'button-group';
+
             const button = document.createElement('button');
             button.textContent = file.replace('.mp3', '');
             button.onclick = () => {
-                const audio = new Audio(file);
-                audio.play();
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                }
+                currentAudio = new Audio(file);
+                currentAudio.play();
                 button.style.backgroundColor = '#e0e0e0';
                 setTimeout(() => {
                     button.style.backgroundColor = '#ffffff';
                 }, 200);
             };
-            soundBoard.appendChild(button);
+
+            const stopButton = document.createElement('button');
+            stopButton.textContent = '■';
+            stopButton.className = 'stop-button';
+            stopButton.onclick = () => {
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    currentAudio = null;
+                }
+            };
+
+            buttonGroup.appendChild(button);
+            buttonGroup.appendChild(stopButton);
+            soundBoard.appendChild(buttonGroup);
         });
     </script>
 </body>
